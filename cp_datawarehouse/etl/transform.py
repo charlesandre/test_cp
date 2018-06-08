@@ -39,7 +39,8 @@ def clean_rides_csv(rides_csv, delimiter=','):
     array_idf = ['75', '77', '78', '91', '92', '93', '94', '95'] 
     rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
     rides_df.from_zipcode = rides_df.from_zipcode.astype(str)
+    rides_df.to_zipcode = rides_df.to_zipcode.astype(str)
     rides_clear_df = rides_df[rides_df.from_zipcode.str[:2].isin(array_idf) == True]
-    rides_clear_df.from_zipcode = rides_clear_df.from_zipcode.astype(int)
     rides_clear_df.reset_index(inplace=True, drop=True)
+    print(rides_clear_df.dtypes)
     return rides_clear_df

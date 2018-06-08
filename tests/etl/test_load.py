@@ -8,6 +8,7 @@ import psycopg2
 from cp_datawarehouse.config.base import config
 from cp_datawarehouse.etl.load import (
     insert_users_list,
+    insert_rides_list,
 )
 from tests.tools.db_init import initialize_database
 
@@ -41,3 +42,26 @@ def test_insert_users_list():
 
     # Skip CSV header first line
     assert result.sort() == users_list[1:].sort()
+
+def test_insert_rides():
+
+    initialize_database(drop=True)
+
+    rides_list = [
+        ('ride_id', 'user_id', 'from_zipcode', 'to_zipcode', 'state', 'quote_date', 'completed_date', 'price_nominal', 'loyalty_point_earned' 'loyalty_status', 'loyalty_status_txt'),
+        (1, 1, '75012', '75011', 'completed', '2018-03-31 04:25:45.582', '2018-04-12 04:25:45.582', 5.5, 1),
+        (2, 2, '75013', '75016', 'completed', '2018-03-21 04:25:45.582', '2018-03-22 04:25:45.582', 5.5, 1),
+        (3, 3, '75014', '75015', 'completed', '2018-02-20 04:25:45.582', '2018-03-02 04:25:45.582', 5.5, 1),
+    ]
+
+    insert_rides_list(rides_list)
+
+    conn = psycopg2.connect(CONFIG["postgres_url"])
+
+    with conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM cp_datawarehouse.rides")
+        result = cur.fetchall()
+
+    # Skip CSV header first line
+    assert result.sort() == rides_list[1:].sort()   

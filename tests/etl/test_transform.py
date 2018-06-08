@@ -44,8 +44,8 @@ def test_clean_rides_csv():
         clean_rides_df[order],
         DataFrame({
             'ride_id' : ['7cd8b375f4577f99414aae0825ecd611', '565b09d786159420be7e8e1058ea76ae'],
-            'from_zipcode' : [75019, 91017],
-            'to_zipcode' : [75018, 75001],
+            'from_zipcode' : ['75019', '91017'],
+            'to_zipcode' : ['75018', '75001'],
             'state' : ['not_completed', 'completed'],
             'price_nominal' : [4.56, 5.05],
             'loyalty_points_earned' : [0, 5],
