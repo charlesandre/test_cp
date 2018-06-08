@@ -23,7 +23,7 @@ def insert_users_list(users_list):
 
     with conn:
         cur = conn.cursor()
-
+        cur.execute("DELETE FROM cp_datawarehouse.users")
         LOGGER.warning("Inserting {nb_rows} CSV row(s) in cp_datawarehouse.users table...".format(
             nb_rows=len(users_list) - 1 # Skip the first header row
         ))
@@ -46,7 +46,7 @@ def insert_rides_list(rides_list):
 
     with conn:
         cur = conn.cursor()
-        
+        cur.execute("DELETE FROM cp_datawarehouse.rides")
         LOGGER.info("Inserting {nb_rows} CSV row(s) in cp_datawarehouse.users table...".format(
             nb_rows=len(rides_list) - 1 # Skip the first header row
         ))

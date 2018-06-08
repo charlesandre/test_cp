@@ -1,0 +1,1 @@
+SELECT u.user_id as user_id, SUM(r.price_nominal) as total_price, count(ride_id) as nb_rides, cast(quote_date as date) as date  FROM cp_datawarehouse.users u INNER JOIN cp_datawarehouse.rides r ON r.user_id = u.user_id GROUP BY u.user_id, cast(quote_date as date);
