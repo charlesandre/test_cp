@@ -3,6 +3,11 @@ from load import (
     insert_users_list,
     insert_rides_list,
 )
+from transform import (
+    get_average_basket,
+    get_least_number_5_days,
+    create_users_daily_rides_df
+)
 
 def load_data():
     print("load data")
@@ -18,5 +23,10 @@ def load_data():
             rides_list[i] = [None if x == '' else x for x in r]
         insert_rides_list(rides_list)
 
+def run_pandas_functions():
+    #get_average_basket()
+    #get_least_number_5_days()
+    create_users_daily_rides_df()
+
 if __name__ == "__main__":
-    load_data()
+    run_pandas_functions()

@@ -30,8 +30,6 @@ def clean_users_csv(users_csv, delimiter=','):
     return users_df
 
 
-
-
 def clean_rides_csv(rides_csv, delimiter=','):
     """
     This function cleans the rides csv file by removing the rides which are not in 'Ile de France'
@@ -44,3 +42,55 @@ def clean_rides_csv(rides_csv, delimiter=','):
     rides_clear_df.reset_index(inplace=True, drop=True)
     print(rides_clear_df.dtypes)
     return rides_clear_df
+
+
+def get_average_basket(rides_csv='raw_data/rides.csv', delimiter=','):
+    #Read CSV into pandas Dataframe.
+    rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=rides_df.shape
+    ))
+    
+    avg_df = rides_df
+    avg_df['quote_date'] = pd.to_datetime(avg_df['quote_date'])
+    avg_df.loc[:, 'day'] = avg_df['quote_date'].dt.normalize().astype(str)
+    avg_df = avg_df[avg_df.state == 'completed']
+    avg_df = avg_df.groupby(['day']).mean().reset_index().rename(columns={'price_nominal':'avg_price'})
+    avg_df = avg_df[['day', 'avg_price']]
+    return avg_df
+
+
+def get_5_days_with_least_rides(rides_csv='raw_data/rides.csv', delimiter=','):
+    #Read CSV into pandas Dataframe.
+    rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=rides_df.shape
+    ))
+    days_df = rides_df
+    days_df = days_df[days_df.state == 'completed']
+    days_df.loc[:, 'quote_date'] = pd.to_datetime(days_df['quote_date']).dt.normalize().astype(str)
+    days_df = days_df.groupby(['quote_date']).count()
+    days_df = days_df.sort_values('ride_id').reset_index().rename(columns={'quote_date':'day','ride_id':'nb_rides'})
+    return days_df[['day', 'nb_rides']].head()
+
+
+def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.csv', delimiter=','):
+    users_df = pd.read_csv(users_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=users_df.shape
+    ))
+    rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=rides_df.shape
+    ))
+    rides_df = rides_df[rides_df.state == 'completed']
+    rides_df['quote_date'] = pd.to_datetime(rides_df['quote_date'])
+    rides_df['daily_date'] = rides_df['quote_date'].dt.normalize().astype(str)
+    rides_df = rides_df.groupby(['user_id', 'daily_date']).agg({'ride_id':'count', 'price_nominal':'sum'}).reset_index().rename(columns={'ride_id':'nb_rides', 'price_nominal':'total_price'})
+    #Join the two dataframes
+    joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
+    return joined_df
