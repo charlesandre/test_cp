@@ -7,7 +7,10 @@ import logging
 import io
 
 import pandas as pd
-
+import matplotlib
+import numpy as np
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 
 LOGGER = logging.getLogger(__name__)
 
@@ -94,3 +97,27 @@ def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_d
     #Join the two dataframes
     joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
     return joined_df
+
+
+def create_chart_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.csv', delimiter=','):
+    users_df = pd.read_csv(users_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=users_df.shape
+    ))
+    rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
+    LOGGER.info(
+        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
+        shape=rides_df.shape
+    ))
+    joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
+    joined_df['quote_date'] = pd.to_datetime(joined_df['quote_date'])
+    joined_df['week_number'] = joined_df["quote_date"].dt.week
+    joined_df = joined_df[joined_df.state == "completed"]
+    joined_df = joined_df.groupby(['week_number', 'loyalty_status', 'loyalty_status_txt']).agg({'ride_id':'count'}).reset_index().rename(columns={'ride_id':'nb_rides'})
+    return joined_df
+
+def plot_graph(df):
+    df = df.pivot(index='week_number', columns='loyalty_status_txt', values='nb_rides')
+    df.plot.bar()
+    plt.show()

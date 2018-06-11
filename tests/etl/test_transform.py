@@ -14,6 +14,7 @@ from cp_datawarehouse.etl.transform import (
     create_users_daily_rides_df,
     get_5_days_with_least_rides,
     get_average_basket,
+    create_chart_df,
 )
 
 
@@ -99,5 +100,23 @@ def test_get_average_basket():
             'avg_price' : [15.0, 20.0],        
         })[order],
         check_dtype=False,
+        check_names=True
+    )
+
+
+def test_create_chart_df():
+    rides_csv = io.StringIO('ride_id,user_id,state,quote_date,price_nominal\n100,u1,completed,2018-05-31 08:13:29.171,12\n101,u1,completed,2018-05-31 09:13:29.171,8\n102,u1,completed,2018-06-01 08:17:29.171,20\n103,u2,completed,2018-05-31 08:13:29.171,5')
+    users_csv = io.StringIO('user_id,loyalty_status,loyalty_status_txt\nu1,0,red\nu2,1,silver\nu3,2,gold\nu4,3,platinium\nu5,3,platinum')
+
+    chart_df = create_chart_df(rides_csv, users_csv)
+    order = ['week_number', 'loyalty_status', 'loyalty_status_txt', 'nb_rides']
+    assert_frame_equal(
+        chart_df[order],
+        DataFrame({
+            'week_number' : [22, 22],
+            'loyalty_status' : [0, 1],
+            'loyalty_status_txt' : ['red', 'silver'],
+            'nb_rides' : [3, 1]        
+        })[order],
         check_names=True
     )

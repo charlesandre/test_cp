@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import csv
 from load import (
     insert_users_list,
@@ -5,12 +7,13 @@ from load import (
 )
 from transform import (
     get_average_basket,
-    get_least_number_5_days,
-    create_users_daily_rides_df
+    get_5_days_with_least_rides,
+    create_users_daily_rides_df,
+    create_chart_df,
+    plot_graph
 )
 
 def load_data():
-    print("load data")
     with open('raw_data/users.csv') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         users_list = list(reader)
@@ -24,9 +27,12 @@ def load_data():
         insert_rides_list(rides_list)
 
 def run_pandas_functions():
-    #get_average_basket()
-    #get_least_number_5_days()
+    load_data()
+    get_average_basket()
+    get_5_days_with_least_rides()
     create_users_daily_rides_df()
+    graph_df = create_chart_df()
+    plot_graph(graph_df)
 
 if __name__ == "__main__":
     run_pandas_functions()
