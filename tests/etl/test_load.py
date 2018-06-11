@@ -8,10 +8,9 @@ import psycopg2
 from cp_datawarehouse.config.base import config
 from cp_datawarehouse.etl.load import (
     insert_users_list,
-    insert_rides_list,
+    insert_rides_list
 )
 from tests.tools.db_init import initialize_database
-
 
 CONFIG = config()
 
@@ -64,4 +63,4 @@ def test_insert_rides():
         result = cur.fetchall()
 
     # Skip CSV header first line
-    assert result.sort() == rides_list[1:].sort()   
+    assert result.sort() == rides_list[1:].sort()

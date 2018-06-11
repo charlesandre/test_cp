@@ -59,4 +59,5 @@ def insert_rides_list(rides_list):
         LOGGER.info(
             "Successfully inserted {nb_rows} CSV row(s) in cp_datawarehouse.users table".format(
             nb_rows=cur.rowcount
-        ))
+            )
+        )

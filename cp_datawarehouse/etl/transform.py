@@ -121,3 +121,4 @@ def plot_graph(df):
     df = df.pivot(index='week_number', columns='loyalty_status_txt', values='nb_rides')
     df.plot.bar()
     plt.show()
+    
