@@ -43,7 +43,6 @@ def clean_rides_csv(rides_csv, delimiter=','):
     rides_df.to_zipcode = rides_df.to_zipcode.astype(str)
     rides_clear_df = rides_df[rides_df.from_zipcode.str[:2].isin(array_idf) == True]
     rides_clear_df.reset_index(inplace=True, drop=True)
-    print(rides_clear_df.dtypes)
     return rides_clear_df
 
 
@@ -55,14 +54,9 @@ def get_average_basket(rides_csv='raw_data/rides.csv', delimiter=','):
         shape=rides_df.shape
     ))
     
-    avg_df = rides_df
-    avg_df['quote_date'] = pd.to_datetime(avg_df['quote_date'])
-    avg_df.loc[:, 'day'] = avg_df['quote_date'].dt.normalize().astype(str)
-    avg_df = avg_df[avg_df.state == 'completed']
-    avg_df = avg_df.groupby(['day']).mean().reset_index().rename(columns={'price_nominal':'avg_price'})
-    avg_df = avg_df[['day', 'avg_price']]
+    rides_df['day'] = pd.to_datetime(rides_df['quote_date']).dt.normalize().astype(str)[rides_df.state == 'completed']
+    avg_df = rides_df.groupby(['day']).mean().reset_index().rename(columns={'price_nominal':'avg_price'})[['day', 'avg_price']]
     return avg_df
-
 
 def get_5_days_with_least_rides(rides_csv='raw_data/rides.csv', delimiter=','):
     #Read CSV into pandas Dataframe.
@@ -71,12 +65,10 @@ def get_5_days_with_least_rides(rides_csv='raw_data/rides.csv', delimiter=','):
         "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
         shape=rides_df.shape
     ))
-    days_df = rides_df
-    days_df = days_df[days_df.state == 'completed']
-    days_df.loc[:, 'quote_date'] = pd.to_datetime(days_df['quote_date']).dt.normalize().astype(str)
-    days_df = days_df.groupby(['quote_date']).count()
-    days_df = days_df.sort_values('ride_id').reset_index().rename(columns={'quote_date':'day','ride_id':'nb_rides'})
-    return days_df[['day', 'nb_rides']].head()
+    completed_rides_df = rides_df[rides_df.state == 'completed']
+    completed_rides_df.loc[:, 'quote_date'] = pd.to_datetime(completed_rides_df['quote_date']).dt.normalize().astype(str)
+    days_df = completed_rides_df.groupby(['quote_date']).count().sort_values('ride_id').reset_index().rename(columns={'quote_date':'day','ride_id':'nb_rides'})[['day', 'nb_rides']].head()
+    return days_df
 
 
 def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.csv', delimiter=','):
@@ -90,12 +82,11 @@ def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_d
         "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
         shape=rides_df.shape
     ))
-    rides_df = rides_df[rides_df.state == 'completed']
-    rides_df['quote_date'] = pd.to_datetime(rides_df['quote_date'])
-    rides_df['daily_date'] = rides_df['quote_date'].dt.normalize().astype(str)
-    rides_df = rides_df.groupby(['user_id', 'daily_date']).agg({'ride_id':'count', 'price_nominal':'sum'}).reset_index().rename(columns={'ride_id':'nb_rides', 'price_nominal':'total_price'})
+    completed_rides_df = rides_df[rides_df.state == 'completed']
+    rides_df['daily_date'] = pd.to_datetime(rides_df['quote_date']).dt.normalize().astype(str)
+    daily_rides_df = rides_df.groupby(['user_id', 'daily_date']).agg({'ride_id':'count', 'price_nominal':'sum'}).reset_index().rename(columns={'ride_id':'nb_rides', 'price_nominal':'total_price'})
     #Join the two dataframes
-    joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
+    joined_df = daily_rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
     return joined_df
 
 
@@ -111,10 +102,8 @@ def create_chart_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.cs
         shape=rides_df.shape
     ))
     joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
-    joined_df['quote_date'] = pd.to_datetime(joined_df['quote_date'])
-    joined_df['week_number'] = joined_df["quote_date"].dt.week
-    joined_df = joined_df[joined_df.state == "completed"]
-    joined_df = joined_df.groupby(['week_number', 'loyalty_status', 'loyalty_status_txt']).agg({'ride_id':'count'}).reset_index().rename(columns={'ride_id':'nb_rides'})
+    joined_df['week_number'] = pd.to_datetime(joined_df['quote_date']).dt.week
+    joined_df = joined_df[joined_df.state == "completed"].groupby(['week_number', 'loyalty_status', 'loyalty_status_txt']).agg({'ride_id':'count'}).reset_index().rename(columns={'ride_id':'nb_rides'})
     return joined_df
 
 def plot_graph(df):
