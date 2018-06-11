@@ -1,5 +1,11 @@
 # Test CP
 
+## Requirements :
+Virtualenv and docker as explained in the original readme. 
+- Start the virtualenv
+- Start the postgres docker container
+
+
 ## Data transform and load
 
 2. The function is called clean_rides_csv inside cp_datawarehouse/etl/transform.py
