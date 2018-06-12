@@ -28,6 +28,6 @@ The sql queries are located in the file requests.sql inside cp_datawarehouse/
 1. The three functions are located in transform.py inside cp_datawarehouse/etl/. Test are in test_trasnform.py
 2. Composed of two functions located in transform.py : 
       - First one is create_chart_df and return the dataframe formated for the graph (using pivot function). test in test_transform.py
-      - Second is plot_graph and uses matplotlib.
+      - Second one use pivot function on the dataframe and plot the graph using matplotlib.
 
 -- Charles Andre -- 
