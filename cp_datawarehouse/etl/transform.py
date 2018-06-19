@@ -21,7 +21,6 @@ def clean_users_csv(users_csv, delimiter=','):
     :param list users_csv: the CSV object (path or StringIO) WHICH INCLUDES HEADER ROW
     :return: the cleaned csv as a Pandas dataframe
     """
-
     users_df = pd.read_csv(users_csv, delimiter=delimiter)
     LOGGER.info(
         "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
@@ -68,7 +67,7 @@ def get_5_days_with_least_rides(rides_csv='raw_data/rides.csv', delimiter=','):
     completed_rides_df = rides_df[rides_df.state == 'completed']
     completed_rides_df.loc[:, 'quote_date'] = pd.to_datetime(completed_rides_df['quote_date']).dt.normalize().astype(str)
     days_df = completed_rides_df.groupby(['quote_date']).count().sort_values('ride_id').reset_index().rename(columns={'quote_date':'day','ride_id':'nb_rides'})[['day', 'nb_rides']].head()
-    return days_df
+    return days_df.head(5)
 
 
 def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.csv', delimiter=','):
@@ -97,7 +96,7 @@ def create_chart_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.cs
         "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
         shape=rides_df.shape
     ))
-    joined_df = rides_df.join(users_df.set_index('user_id'), on='user_id', how='inner')
+    joined_df = users_df.join(rides_df.set_index('user_id'), on='user_id', how='inner')
     joined_df['week_number'] = pd.to_datetime(joined_df['quote_date']).dt.week
     joined_df = joined_df[joined_df.state == "completed"].groupby(['week_number', 'loyalty_status', 'loyalty_status_txt']).agg({'ride_id':'count'}).reset_index().rename(columns={'ride_id':'nb_rides'})
     return joined_df

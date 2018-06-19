@@ -28,10 +28,18 @@ def load_data():
         insert_rides_list(rides_list)
 
 def run_pandas_functions():
+    #Add data from csv to database
     load_data()
-    get_average_basket()
-    get_5_days_with_least_rides()
-    create_users_daily_rides_df()
+    #Get average basket per day
+    avg_basket = get_average_basket()
+    print(avg_basket.head())
+    #Get the 5 days with the least amount of rides. 
+    days = get_5_days_with_least_rides()
+    print(days)
+
+    users_daily_rides_df = create_users_daily_rides_df()
+    print(users_daily_rides_df.head())
+    
     graph_df = create_chart_df()
     plot_graph(graph_df)
 

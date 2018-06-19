@@ -106,16 +106,16 @@ def test_get_average_basket():
 
 def test_create_chart_df():
     rides_csv = io.StringIO('ride_id,user_id,state,quote_date,price_nominal\n100,u1,completed,2018-05-31 08:13:29.171,12\n101,u1,completed,2018-05-31 09:13:29.171,8\n102,u1,completed,2018-06-01 08:17:29.171,20\n103,u2,completed,2018-05-31 08:13:29.171,5')
-    users_csv = io.StringIO('user_id,loyalty_status,loyalty_status_txt\nu1,0,red\nu2,1,silver\nu3,2,gold\nu4,3,platinium\nu5,3,platinum')
+    users_csv = io.StringIO('user_id,loyalty_status,loyalty_status_txt\nu1,0,platinium\nu2,1,silver\nu3,2,gold\nu4,3,platinium\n5,3,platinum')
 
-    chart_df = create_chart_df(rides_csv, users_csv)
+    chart_df = create_chart_df(users_csv, rides_csv)
     order = ['week_number', 'loyalty_status', 'loyalty_status_txt', 'nb_rides']
     assert_frame_equal(
         chart_df[order],
         DataFrame({
             'week_number' : [22, 22],
             'loyalty_status' : [0, 1],
-            'loyalty_status_txt' : ['red', 'silver'],
+            'loyalty_status_txt' : ['platinum', 'silver'],
             'nb_rides' : [3, 1]        
         })[order],
         check_names=True

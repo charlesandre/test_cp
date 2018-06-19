@@ -61,3 +61,25 @@ def insert_rides_list(rides_list):
             nb_rows=cur.rowcount
             )
         )
+
+def insert_users_daily_rides(users_daily_rides_list):
+
+    conn = psycopg2.connect(CONFIG["postgres_url"])
+
+    with conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM cp_datawarehouse.users_daily_rides")
+        LOGGER.info("Inserting {nb_rows} row(s) in cp_datawarehouse.users_daily_rides table...".format(
+            nb_rows=len(users_daily_rides_list) - 1 # Skip the first header row
+        ))
+        psycopg2.extras.execute_values(
+            cur,
+            "INSERT INTO cp_datawarehouse.users_daily_rides VALUES %s",
+            # Skip the first header row
+            users_daily_rides_list[1:]
+        )
+        LOGGER.info(
+            "Successfully inserted {nb_rows} CSV row(s) in cp_datawarehouse.users table".format(
+            nb_rows=cur.rowcount
+            )
+        )
