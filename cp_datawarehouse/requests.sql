@@ -25,7 +25,7 @@ GROUP BY u.user_id, cast(quote_date as date);
 
 
 /*2 Average basket per day*/
-SELECT user_id, cast(quote_date as date), AVG(price_nominal)FROM cp_datawarehouse.rides
+SELECT user_id, cast(quote_date as date), AVG(price_nominal) FROM cp_datawarehouse.rides
 WHERE state = 'completed'
 GROUP BY cast(quote_date as date), user_id;
 

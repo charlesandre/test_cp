@@ -4,6 +4,7 @@ import csv
 from load import (
     insert_users_list,
     insert_rides_list,
+    insert_users_daily_rides
 )
 from transform import (
     get_average_basket,
@@ -26,20 +27,27 @@ def load_data():
         for i, r in enumerate(rides_list):
             rides_list[i] = [None if x == '' else x for x in r]
         insert_rides_list(rides_list)
+    
+    users_daily_rides_df = create_users_daily_rides_df()
+    df = users_daily_rides_df[['user_id', 'loyalty_status', 'loyalty_status_txt', 'daily_date', 'nb_rides', 'total_price']]
+    users_daily_rides_list = df.values.tolist()
+    insert_users_daily_rides(users_daily_rides_list)
 
 def run_pandas_functions():
-    #Add data from csv to database
-    load_data()
+    
     #Get average basket per day
     avg_basket = get_average_basket()
     print(avg_basket.head())
     #Get the 5 days with the least amount of rides. 
     days = get_5_days_with_least_rides()
     print(days)
-
+    #Get the users daily ride dataframe
     users_daily_rides_df = create_users_daily_rides_df()
     print(users_daily_rides_df.head())
-    
+
+    #Add data from csv to database
+    load_data()
+
     graph_df = create_chart_df()
     plot_graph(graph_df)
 

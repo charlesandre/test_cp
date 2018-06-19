@@ -57,6 +57,7 @@ def test_clean_rides_csv():
         check_names=True
     )
 
+
 def test_users_daily_rides():
     rides_csv = io.StringIO('ride_id,user_id,state,quote_date,price_nominal\n100,u1,completed,2018-05-31 08:13:29.171,12\n101,u1,completed,2018-05-31 09:13:29.171,8\n102,u1,completed,2018-06-01 08:17:29.171,20\n103,u2,completed,2018-05-31 08:13:29.171,5')
     users_csv = io.StringIO('user_id,loyalty_status,loyalty_status_txt\nu1,0,red\nu2,1,silver\nu3,2,gold\nu4,3,platinium\nu5,3,platinum')

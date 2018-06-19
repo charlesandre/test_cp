@@ -24,6 +24,9 @@ def initialize_database(drop=False):
     
     with open("cp_datawarehouse/db_models/create_table_rides.sql", "r") as sql_file:
         sql_create_ride_statement = sql_file.read()
+    
+    with open("cp_datawarehouse/db_models/create_table_users_daily_rides.sql", "r") as sql_file:
+        sql_create_users_daily_rides_statement = sql_file.read()
 
     with conn:
         cur = conn.cursor()
@@ -46,3 +49,10 @@ def initialize_database(drop=False):
             cur.execute("DROP TABLE IF EXISTS cp_datawarehouse.rides")
         cur.execute(sql_create_ride_statement)
         LOGGER.info('Table cp_datawarehouse.users created successfully')
+
+        #  Create table 'rides'
+        LOGGER.info('Creating table cp_datawarehouse.users_daily_rides')
+        if drop:
+            cur.execute("DROP TABLE IF EXISTS cp_datawarehouse.users_daily_rides")
+        cur.execute(sql_create_users_daily_rides_statement)
+        LOGGER.info('Table cp_datawarehouse.users_daily_rides created successfully')
