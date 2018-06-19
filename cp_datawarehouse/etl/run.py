@@ -10,13 +10,14 @@ from transform import (
     get_5_days_with_least_rides,
     create_users_daily_rides_df,
     create_chart_df,
-    plot_graph
+    plot_graph,
+    clean_users_csv
 )
 
 def load_data():
     with open('raw_data/users.csv') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        users_list = list(reader)
+        reader = clean_users_csv(csvfile)
+        users_list = reader.values.tolist()
         insert_users_list(users_list)
 
     with open('raw_data/rides.csv') as csvfile:

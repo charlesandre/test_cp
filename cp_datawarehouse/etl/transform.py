@@ -91,11 +91,7 @@ def create_users_daily_rides_df(users_csv='raw_data/users.csv', rides_csv='raw_d
 
 
 def create_chart_df(users_csv='raw_data/users.csv', rides_csv='raw_data/rides.csv', delimiter=','):
-    users_df = pd.read_csv(users_csv, delimiter=delimiter)
-    LOGGER.info(
-        "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
-        shape=users_df.shape
-    ))
+    users_df = clean_users_csv(users_csv, delimiter)
     rides_df = pd.read_csv(rides_csv, delimiter=delimiter)
     LOGGER.info(
         "Successfully read {shape} CSV (row(s), column(s)) into dataframe".format(
