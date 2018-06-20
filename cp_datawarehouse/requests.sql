@@ -25,15 +25,13 @@ GROUP BY u.user_id, cast(quote_date as date);
 
 
 /*2 Average basket per day*/
-SELECT user_id, cast(quote_date as date), AVG(price_nominal) FROM cp_datawarehouse.rides
+SELECT cast(quote_date as date) as date, AVG(price_nominal) FROM cp_datawarehouse.rides
 WHERE state = 'completed'
-GROUP BY cast(quote_date as date), user_id;
-
+GROUP BY cast(quote_date as date);
 
 /*3 5 days with the least number of completed ride */
 SELECT cast(quote_date as date) as day, COUNT(ride_id) as nb_of_ride 
 FROM cp_datawarehouse.rides
 WHERE state = 'completed'
 GROUP BY cast(quote_date as date)
-ORDER BY COUNT(ride_id) ASC
-LIMIT 5
+ORDER BY COUNT(ride_id) ASC LIMIT 5;

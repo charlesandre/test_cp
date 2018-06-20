@@ -65,7 +65,7 @@ def get_5_days_with_least_rides(rides_csv='raw_data/rides.csv', delimiter=','):
         shape=rides_df.shape
     ))
     completed_rides_df = rides_df[rides_df.state == 'completed']
-    completed_rides_df.loc[:, 'quote_date'] = pd.to_datetime(completed_rides_df['quote_date']).dt.normalize().astype(str)
+    completed_rides_df.loc[:,'quote_date'] = pd.to_datetime(completed_rides_df['quote_date']).dt.normalize().astype(str)
     days_df = completed_rides_df.groupby(['quote_date']).count().sort_values('ride_id').reset_index().rename(columns={'quote_date':'day','ride_id':'nb_rides'})[['day', 'nb_rides']].head()
     return days_df.head(5)
 
