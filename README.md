@@ -27,7 +27,7 @@ The sql queries are located in the file requests.sql inside cp_datawarehouse/
       - Second one plot the graph from a dataframe using matplotlib.
 
 
-## How to run : 
+## How to run :
 
 Enter your cp_dw virtualenv
 ```bash
@@ -37,7 +37,7 @@ $ docker-compose -f tests/tools/docker-compose.yml up -d
 # Run the tests
 $ PYTHONPATH=. pytest
 
-#Run all the functionss
+#Run all the functions
 $ PYTHONPATH=. python cp_datawarehouse/etl/run.py
 ```
 
